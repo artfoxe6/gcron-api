@@ -1,11 +1,11 @@
 package route
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"gcron-api/config/env"
 	"gcron-api/route/api"
 	"gcron-api/util/qlog"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 var Route *gin.Engine
@@ -43,9 +43,7 @@ func Load() *gin.Engine {
 	//		SkipPaths: nil,
 	//	}))
 	//}
-	Route.Static("/apidoc", "apidoc/")
 	//其他路由
-	api.LoadUserRoute(Route)
-	api.LoadArticleRoute(Route)
+	api.LoadJobRoute(Route)
 	return Route
 }

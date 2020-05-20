@@ -3,6 +3,7 @@ module gcron-api
 go 1.13
 
 require (
+	github.com/artfoxe6/cron_expression v1.0.5
 	github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cache v1.1.0
