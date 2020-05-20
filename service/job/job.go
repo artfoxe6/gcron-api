@@ -5,6 +5,7 @@ import (
 	"gcron-api/config/cache"
 	"gcron-api/config/env"
 	"gcron-api/model/Job"
+	"gcron-api/util/lib"
 	"gcron-api/util/request"
 	"github.com/artfoxe6/cron_expression"
 	"time"
@@ -24,10 +25,10 @@ func Add(r *request.Request) bool {
 		Method:         inputs["method"],
 		Url:            inputs["url"],
 		Args:           inputs["args"],
-		Status:         0,
+		Status:         1,
 		Header:         inputs["header"],
 		LocationName:   inputs["location_name"],
-		LocationOffset: 0,
+		LocationOffset: lib.Int(inputs["location_offset"]),
 		TTL:            0,
 	}
 	err = job.Add()
@@ -44,7 +45,9 @@ func SyncRedis(job Job.Job) {
 	expr := cron_expression.NewExpression(job.Expression, job.LocationName, job.LocationOffset)
 	dst := make([]string, 0)
 	_ = expr.Next(time.Now(), 1, &dst)
-	_, _ = cache.Instance().Do("ZADD", env.Redis.Zset, dst[0], job.ID)
+	local := time.FixedZone(job.LocationName, job.LocationOffset)
+	nextAt, _ := time.ParseInLocation("2006-01-02 15:04:05", dst[0], local)
+	_, _ = cache.Instance().Do("ZADD", env.Redis.Zset, nextAt.Unix(), job.ID)
 	jobByte, _ := json.Marshal(job)
 	_, _ = cache.Instance().Do("HSET", env.Redis.Hash, job.ID, string(jobByte))
 }

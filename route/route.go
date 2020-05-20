@@ -45,5 +45,6 @@ func Load() *gin.Engine {
 	//}
 	//其他路由
 	api.LoadJobRoute(Route)
+	api.LoadTestRoute(Route)
 	return Route
 }
