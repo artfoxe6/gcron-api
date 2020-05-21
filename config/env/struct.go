@@ -25,8 +25,9 @@ var (
 		IdleTimeout time.Duration
 		Db          int
 		Timeout     int
-		Zset        string
-		Hash        string
+		JobMeta     string
+		JobData     string
+		Ready       string
 	}{}
 	Jwt = struct {
 		Key string
