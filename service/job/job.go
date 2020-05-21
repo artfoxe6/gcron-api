@@ -2,6 +2,7 @@ package job
 
 import (
 	"encoding/json"
+	"fmt"
 	"gcron-api/config/cache"
 	"gcron-api/config/env"
 	"gcron-api/model/Job"
@@ -47,7 +48,9 @@ func SyncRedis(job Job.Job) {
 	_ = expr.Next(time.Now(), 1, &dst)
 	local := time.FixedZone(job.LocationName, job.LocationOffset)
 	nextAt, _ := time.ParseInLocation("2006-01-02 15:04:05", dst[0], local)
-	_, _ = cache.Instance().Do("ZADD", env.Redis.JobMeta, nextAt.Unix(), job.ID)
+	//jobId_nextRunAt
+	value := fmt.Sprint(job.ID) + "_" + fmt.Sprint(nextAt.Unix())
+	_, _ = cache.Instance().Do("ZADD", env.Redis.JobMeta, nextAt.Unix(), value)
 	jobByte, _ := json.Marshal(job)
 	_, _ = cache.Instance().Do("HSET", env.Redis.JobData, job.ID, string(jobByte))
 }
